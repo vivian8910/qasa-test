@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ImgContainer, ImageWrapper, Container } from "./Carousel.style";
+import SVGIcon from "./SVGIcon";
 
 
 const image = [
@@ -19,17 +20,22 @@ const image = [
 
 export const Carousel = () => {
     return (
-        <Container>
-            <ImgContainer>
-                {
-                    image.map((item, index) => (
-                        <ImageWrapper>
-                            <img src={item.imageUrl} alt="" width="400" height="600" />
-                        </ImageWrapper>
-                    ))
-                }
-            </ImgContainer>
-        </Container>
+        <>
+            <Container>
+                <ImgContainer>
+                    {
+                        image.map((item, index) => (
+                            <ImageWrapper>
+                                <img src={item.imageUrl} alt="" width="400" height="600" />
+                            </ImageWrapper>
+                        ))
+                    }
+
+                </ImgContainer>
+            </Container>
+            <SVGIcon name="chevronLeft" width="60px" fill="#000" />
+            <SVGIcon name="chevronRight" width="60px" fill="#000" />
+        </>
     )
 };
 
