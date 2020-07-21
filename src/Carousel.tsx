@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useRef } from "react";
 import { ImgContainer, ImageWrapper, Container, ScrollLeft, ScrollRight } from "./Carousel.style";
 import SVGIcon from "./SVGIcon";
 
@@ -19,20 +20,62 @@ const image = [
 ];
 
 const Carousel = () => {
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const containerRef = useRef<HTMLOListElement>(null);
+    const scrollRef = useRef<HTMLLIElement>(null);
+
+    const scrollOffset = scrollRef?.current?.offsetWidth;
+
+    const handleScrollLeft = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        if (currentIndex === 0) {
+            setCurrentIndex(image.length - 1);
+            containerRef?.current?.scrollBy({
+                left: scrollOffset && scrollOffset * image.length,
+                behavior: "smooth",
+            });
+        } else {
+            setCurrentIndex(prevCurrent => prevCurrent - 1);
+            containerRef?.current?.scrollBy({
+                left: scrollOffset && - scrollOffset,
+                behavior: "smooth",
+            });
+        }
+    };
+
+    const handleScrollRight = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        if (currentIndex !== image.length - 1) {
+            setCurrentIndex(prevCurrent => prevCurrent + 1);
+            containerRef?.current?.scrollBy({
+                left: scrollOffset,
+                behavior: "smooth",
+            });
+        } else {
+            setCurrentIndex(0);
+            containerRef?.current?.scrollBy({
+                left: scrollOffset && - scrollOffset * image.length,
+                behavior: "smooth",
+            });
+        }
+    };
+
     return (
         <>
             <Container>
                 {
                     image.length > 1 && (
-                        <ScrollLeft>
+                        <ScrollLeft onClick={e => handleScrollLeft(e)}>
                             <SVGIcon name="chevronLeft" fill="#000" viewBox={"-5 0 40 26"} />
                         </ScrollLeft>
                     )
                 }
-                <ImgContainer>
+                <ImgContainer ref={containerRef}>
                     {
                         image.map((item, index) => (
-                            <ImageWrapper>
+                            <ImageWrapper ref={scrollRef}>
                                 <img src={item.imageUrl} alt="" width="400" height="600" />
                             </ImageWrapper>
                         ))
@@ -41,7 +84,7 @@ const Carousel = () => {
                 </ImgContainer>
                 {
                     image.length > 1 && (
-                        <ScrollRight>
+                        <ScrollRight onClick={e => handleScrollRight(e)}>
                             <SVGIcon name="chevronRight" fill="#000" viewBox={"-5 0 40 26"} />
                         </ScrollRight>
                     )
