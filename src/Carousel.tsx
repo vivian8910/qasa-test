@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ImgContainer, ImageWrapper, Container } from "./Carousel.style";
+import { ImgContainer, ImageWrapper, Container, ScrollLeft, ScrollRight } from "./Carousel.style";
 import SVGIcon from "./SVGIcon";
 
 
@@ -18,10 +18,17 @@ const image = [
     },
 ];
 
-export const Carousel = () => {
+const Carousel = () => {
     return (
         <>
             <Container>
+                {
+                    image.length > 1 && (
+                        <ScrollLeft>
+                            <SVGIcon name="chevronLeft" fill="#000" viewBox={"-5 0 40 26"} />
+                        </ScrollLeft>
+                    )
+                }
                 <ImgContainer>
                     {
                         image.map((item, index) => (
@@ -32,9 +39,14 @@ export const Carousel = () => {
                     }
 
                 </ImgContainer>
+                {
+                    image.length > 1 && (
+                        <ScrollRight>
+                            <SVGIcon name="chevronRight" fill="#000" viewBox={"-5 0 40 26"} />
+                        </ScrollRight>
+                    )
+                }
             </Container>
-            <SVGIcon name="chevronLeft" width="60px" fill="#000" />
-            <SVGIcon name="chevronRight" width="60px" fill="#000" />
         </>
     )
 };
