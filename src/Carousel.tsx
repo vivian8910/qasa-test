@@ -43,17 +43,17 @@ const Carousel = (props: StyledProps) => {
         e.preventDefault();
         if (currentIndex === 0) {
             setCurrentIndex(image.length - 1);
-            if (scrollRef?.current?.offsetWidth) {
+            if (scrollRef.current) {
                 containerRef?.current?.scrollBy({
-                    left: scrollRef?.current?.offsetWidth * image.length,
+                    left: scrollRef.current.offsetWidth * image.length,
                     behavior: "smooth",
                 });
             }
         } else {
             setCurrentIndex(prevCurrent => prevCurrent - 1);
-            if (scrollRef?.current?.offsetWidth) {
+            if (scrollRef.current) {
                 containerRef?.current?.scrollBy({
-                    left: scrollRef?.current?.offsetWidth && - scrollRef?.current?.offsetWidth,
+                    left: - scrollRef.current.offsetWidth,
                     behavior: "smooth",
                 });
             }
@@ -64,17 +64,17 @@ const Carousel = (props: StyledProps) => {
         e.preventDefault();
         if (currentIndex !== image.length - 1) {
             setCurrentIndex(prevCurrent => prevCurrent + 1);
-            if (scrollRef?.current?.offsetWidth) {
+            if (scrollRef.current) {
                 containerRef?.current?.scrollBy({
-                    left: scrollRef?.current?.offsetWidth && scrollRef?.current?.offsetWidth,
+                    left: scrollRef.current.offsetWidth,
                     behavior: "smooth",
                 });
             }
         } else {
             setCurrentIndex(0);
-            if (scrollRef?.current?.offsetWidth) {
+            if (scrollRef.current) {
                 containerRef?.current?.scrollBy({
-                    left: scrollRef?.current?.offsetWidth && - scrollRef?.current?.offsetWidth * image.length,
+                    left: - scrollRef.current.offsetWidth * image.length,
                     behavior: "smooth",
                 });
             }
@@ -84,14 +84,25 @@ const Carousel = (props: StyledProps) => {
     const handleIndicatorClick = (e: React.MouseEvent<HTMLElement>, indicatorIndex: number) => {
         e.preventDefault();
         setCurrentIndex(indicatorIndex);
-        if (scrollRef?.current?.offsetWidth) {
+        if (scrollRef.current) {
             containerRef?.current?.scrollBy({
                 left:
                     indicatorIndex > currentIndex
-                        ? scrollRef?.current?.offsetWidth && scrollRef?.current?.offsetWidth * (indicatorIndex - currentIndex)
-                        : scrollRef?.current?.offsetWidth && -scrollRef?.current?.offsetWidth * (currentIndex - indicatorIndex),
+                        ? scrollRef.current.offsetWidth && scrollRef.current.offsetWidth * (indicatorIndex - currentIndex)
+                        : scrollRef.current.offsetWidth && -scrollRef.current.offsetWidth * (currentIndex - indicatorIndex),
                 behavior: "smooth",
             });
+        }
+    };
+
+    const handleScroll = () => {
+        if (containerRef.current) {
+            if (containerRef.current.scrollLeft % containerRef.current.clientWidth === 0) {
+                const scrollIndex = containerRef.current.scrollLeft / containerRef.current.clientWidth;
+                if (scrollIndex !== currentIndex) {
+                    setCurrentIndex(scrollIndex);
+                }
+            }
         }
     };
 
@@ -104,7 +115,7 @@ const Carousel = (props: StyledProps) => {
                     </ScrollLeft>
                 )
             }
-            <ImgContainer ref={containerRef}>
+            <ImgContainer ref={containerRef} onScroll={handleScroll}>
                 {
                     image.map((item, index) => (
                         <ImageWrapper ref={scrollRef} key={item.imageUrl}>

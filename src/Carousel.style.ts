@@ -36,12 +36,33 @@ export const ImgContainer = styled.ol`
         display: none;
     }
     width: 100%;
+
+    @supports not (scroll-snap-align: start) {
+        -webkit-scroll-snap-type: mandatory;
+        scroll-snap-type: mandatory;
+        -webkit-scroll-snap-destination: 0 50%;
+        scroll-snap-destination: 0 50%;
+        -webkit-scroll-snap-points-x: repeat(100%);
+        scroll-snap-points-x: repeat(100%);
+    }
+
+    @supports (scroll-snap-align: start) {
+        scroll-snap-type: x mandatory;
+    }
 `
 
 export const ImageWrapper = styled.li`
     display: inline-flex;
     flex: 0 0 100%;
     box-sizing: border-box;
+
+    @supports not (scroll-snap-align: start) {
+        scroll-snap-coordinate: 0 0;
+    }
+
+    @supports (scroll-snap-align: start) {
+        scroll-snap-align: start;
+    }
 `;
 
 export const ScrollLeft = styled.button`
