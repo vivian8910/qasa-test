@@ -1,14 +1,15 @@
 import styled, { css } from "styled-components";
+import { StyledProps } from "./Carousel";
 
 const ScrollButtonBase = css`
     display: none;
     @media only screen and (min-width: 600px) {
         width: 42px;
         height: 42px;
+        background-color: transparent;
         padding: 0;
         border: none;
         opacity: 0.4;
-        /* stylelint-disable-next-line */
         &:focus {
             opacity: 1;
             outline: none;
@@ -68,6 +69,44 @@ export const Container = styled.div`
         ${ScrollButtonBase}
         top: calc(50% - 21px);
         right: 0;
+    }
+`;
+
+export const Indicator = styled.span<StyledProps>`
+    height: ${props => (props.isCurrent ? 6 : 4)}px;
+    width: ${props => (props.isCurrent ? 6 : 4)}px;
+    border-radius: 50%;
+    background-color: ${props => (props.isCurrent ? "#FFFFFF" : "#7f7f7f")};
+    display: inline-block;
+    &:hover {
+        background-color: "#FFFFFF";
+        height: 6px;
+        width: 6px;
+    }
+    @media only screen and (min-width: 600px) {
+        height: ${props => (props.isCurrent ? 10 : 8)}px;
+        width: ${props => (props.isCurrent ? 10 : 8)}px;
+        &:hover {
+            background-color: "#FFFFFF";
+            height: 10px;
+            width: 10px;
+        }
+    }
+`;
+
+export const IndicatorContainer = styled.div`
+    position: absolute;
+    z-index: 100;
+    bottom: 8px;
+    width: 40px;
+    right: calc(50% - 20px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @media only screen and (min-width: 600px) {
+        bottom: 10px;
+        width: 60px;
+        right: calc(50% - 30px);
     }
 `;
 

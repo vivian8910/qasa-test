@@ -1,6 +1,14 @@
 import * as React from "react";
 import { useState, useRef } from "react";
-import { ImgContainer, ImageWrapper, Container, ScrollLeft, ScrollRight } from "./Carousel.style";
+import {
+    ImgContainer,
+    ImageWrapper,
+    Container,
+    ScrollLeft,
+    ScrollRight,
+    IndicatorContainer,
+    Indicator
+} from "./Carousel.style";
 import SVGIcon from "./SVGIcon";
 
 
@@ -19,29 +27,36 @@ const image = [
     },
 ];
 
-const Carousel = () => {
+export interface StyledProps {
+    isCurrent?: boolean;
+}
+
+const Carousel = (props: StyledProps) => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const containerRef = useRef<HTMLOListElement>(null);
     const scrollRef = useRef<HTMLLIElement>(null);
 
-    const scrollOffset = scrollRef?.current?.offsetWidth;
 
     const handleScrollLeft = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         if (currentIndex === 0) {
             setCurrentIndex(image.length - 1);
-            containerRef?.current?.scrollBy({
-                left: scrollOffset && scrollOffset * image.length,
-                behavior: "smooth",
-            });
+            if (scrollRef?.current?.offsetWidth) {
+                containerRef?.current?.scrollBy({
+                    left: scrollRef?.current?.offsetWidth * image.length,
+                    behavior: "smooth",
+                });
+            }
         } else {
             setCurrentIndex(prevCurrent => prevCurrent - 1);
-            containerRef?.current?.scrollBy({
-                left: scrollOffset && - scrollOffset,
-                behavior: "smooth",
-            });
+            if (scrollRef?.current?.offsetWidth) {
+                containerRef?.current?.scrollBy({
+                    left: scrollRef?.current?.offsetWidth && - scrollRef?.current?.offsetWidth,
+                    behavior: "smooth",
+                });
+            }
         }
     };
 
@@ -49,48 +64,77 @@ const Carousel = () => {
         e.preventDefault();
         if (currentIndex !== image.length - 1) {
             setCurrentIndex(prevCurrent => prevCurrent + 1);
-            containerRef?.current?.scrollBy({
-                left: scrollOffset,
-                behavior: "smooth",
-            });
+            if (scrollRef?.current?.offsetWidth) {
+                containerRef?.current?.scrollBy({
+                    left: scrollRef?.current?.offsetWidth && scrollRef?.current?.offsetWidth,
+                    behavior: "smooth",
+                });
+            }
         } else {
             setCurrentIndex(0);
+            if (scrollRef?.current?.offsetWidth) {
+                containerRef?.current?.scrollBy({
+                    left: scrollRef?.current?.offsetWidth && - scrollRef?.current?.offsetWidth * image.length,
+                    behavior: "smooth",
+                });
+            }
+        }
+    };
+
+    const handleIndicatorClick = (e: React.MouseEvent<HTMLElement>, indicatorIndex: number) => {
+        e.preventDefault();
+        setCurrentIndex(indicatorIndex);
+        if (scrollRef?.current?.offsetWidth) {
             containerRef?.current?.scrollBy({
-                left: scrollOffset && - scrollOffset * image.length,
+                left:
+                    indicatorIndex > currentIndex
+                        ? scrollRef?.current?.offsetWidth && scrollRef?.current?.offsetWidth * (indicatorIndex - currentIndex)
+                        : scrollRef?.current?.offsetWidth && -scrollRef?.current?.offsetWidth * (currentIndex - indicatorIndex),
                 behavior: "smooth",
             });
         }
     };
 
     return (
-        <>
-            <Container>
+        <Container>
+            {
+                image.length > 1 && (
+                    <ScrollLeft onClick={e => handleScrollLeft(e)}>
+                        <SVGIcon name="chevronLeft" fill="#000" viewBox={"-8 0 40 26"} />
+                    </ScrollLeft>
+                )
+            }
+            <ImgContainer ref={containerRef}>
                 {
-                    image.length > 1 && (
-                        <ScrollLeft onClick={e => handleScrollLeft(e)}>
-                            <SVGIcon name="chevronLeft" fill="#000" viewBox={"-5 0 40 26"} />
-                        </ScrollLeft>
-                    )
+                    image.map((item, index) => (
+                        <ImageWrapper ref={scrollRef} key={item.imageUrl}>
+                            <img src={item.imageUrl} alt="" width="400" height="600" />
+                        </ImageWrapper>
+                    ))
                 }
-                <ImgContainer ref={containerRef}>
-                    {
-                        image.map((item, index) => (
-                            <ImageWrapper ref={scrollRef}>
-                                <img src={item.imageUrl} alt="" width="400" height="600" />
-                            </ImageWrapper>
-                        ))
-                    }
 
-                </ImgContainer>
-                {
-                    image.length > 1 && (
+            </ImgContainer>
+            {
+                image.length > 1 && (
+                    <>
+                        <IndicatorContainer id="indicator">
+                            {image.map((item, indicatorIndex) => (
+                                <Indicator
+                                    onClick={(e: React.MouseEvent<HTMLElement>) =>
+                                        handleIndicatorClick(e, indicatorIndex)
+                                    }
+                                    isCurrent={indicatorIndex === currentIndex}
+                                    key={item.imageUrl}
+                                />
+                            ))}
+                        </IndicatorContainer>
                         <ScrollRight onClick={e => handleScrollRight(e)}>
-                            <SVGIcon name="chevronRight" fill="#000" viewBox={"-5 0 40 26"} />
+                            <SVGIcon name="chevronRight" fill="#000" viewBox={"-8 0 40 26"} />
                         </ScrollRight>
-                    )
-                }
-            </Container>
-        </>
+                    </>
+                )
+            }
+        </Container>
     )
 };
 
