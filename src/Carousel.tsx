@@ -11,27 +11,24 @@ import {
 } from "./Carousel.style";
 import SVGIcon from "./SVGIcon";
 
+export interface Image {
+    imageUrl: string;
+    altText: string;
+}
 
-const image = [
-    {
-        imageUrl: "https://i.pinimg.com/564x/94/b0/a2/94b0a22760ade243dd0e2fb4fe3acf0c.jpg"
-    },
-    {
-        imageUrl: "https://i.pinimg.com/564x/fe/88/b5/fe88b556118ef8b5352331ce4d5da2cf.jpg"
-    },
-    {
-        imageUrl: "https://i.pinimg.com/564x/3c/07/ee/3c07ee82742b951a1238ec4fe0a73ad4.jpg"
-    },
-    {
-        imageUrl: "https://i.pinimg.com/564x/9e/56/cb/9e56cbfc761793360e04e3030148dab4.jpg"
-    },
-];
+export interface OwnProps {
+    image: Image[];
+}
 
 export interface StyledProps {
     isCurrent?: boolean;
 }
 
-const Carousel = (props: StyledProps) => {
+export type Props = OwnProps & StyledProps;
+
+const Carousel = (props: Props) => {
+
+    const { image } = props;
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -119,7 +116,7 @@ const Carousel = (props: StyledProps) => {
                 {
                     image.map((item, index) => (
                         <ImageWrapper ref={scrollRef} key={item.imageUrl}>
-                            <img src={item.imageUrl} alt="" width="400" height="600" />
+                            <img src={item.imageUrl} alt={item.altText} width="400" height="600" />
                         </ImageWrapper>
                     ))
                 }
